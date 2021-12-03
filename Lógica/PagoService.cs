@@ -2,18 +2,21 @@
 using Entidad;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Lógica
 {
-    public class FacturaService
+    public class PagoService
     {
-        FacturaRepository facturaRepository;
+        PagoRepository pagoRepository;
         ConnectionManager connectionManager;
 
-        public FacturaService(string connectionstring)
+        public PagoService(string connectionstring)
         {
             connectionManager = new ConnectionManager(connectionstring);
-            facturaRepository = new FacturaRepository(connectionManager.Connetion);
+            pagoRepository = new PagoRepository(connectionManager.Connetion);
         }
 
         public string GuardarArchivo(string archivo)
@@ -21,14 +24,14 @@ namespace Lógica
             try
             {
                 connectionManager.Open();
-                List<Factura> facturas = new List<Factura>();
+                List<Pago> pagos = new List<Pago>();
 
-                facturas = facturaRepository.MapearArchivo(archivo);
+                pagos = pagoRepository.MapearArchivo(archivo);
 
-                if (facturas != null)
+                if (pagos != null)
                 {
 
-                    facturaRepository.CargarArchivo(facturas);
+                    pagoRepository.CargarArchivoPago(pagos);
                     return "Se cargaron correctamente los datos del archivo";
 
                 }
@@ -47,38 +50,39 @@ namespace Lógica
                 connectionManager.Close();
             }
         }
-        public ConsultaReponseFactura ConsultarListFacturas(string filtro)
+
+        public ConsultaReponsePago ConsultarListPagos(string filtro)
         {
             try
             {
                 connectionManager.Open();
                 if (filtro == "Todos")
                 {
-                    return new ConsultaReponseFactura(facturaRepository.ConsultarTodasFacturas());
+                    return new ConsultaReponsePago(pagoRepository.ConsultarTodosPagos());
                 }
                 else
                 {
-                    return new ConsultaReponseFactura(facturaRepository.ConsultarFiltroFacturas(filtro));
+                    return new ConsultaReponsePago(pagoRepository.ConsultarFiltroPago(filtro));
                 }
 
             }
             catch (Exception exception)
             {
-                return new ConsultaReponseFactura("Se presentó el siguiente error: " + exception.Message);
+                return new ConsultaReponsePago("Se presentó el siguiente error: " + exception.Message);
             }
             finally
             {
                 connectionManager.Close();
             }
         }
-        public List<Factura> ConsultarFacturas()
+        public List<Pago> ConsultarPagos()
         {
-            List<Factura> facturas = new List<Factura>();
+            List<Pago> pagos = new List<Pago>();
 
             try
             {
                 connectionManager.Open();
-                facturas = facturaRepository.ConsultarTodasFacturas();
+                pagos = pagoRepository.ConsultarTodosPagos();
             }
             catch (Exception exception)
             {
@@ -88,26 +92,24 @@ namespace Lógica
             {
                 connectionManager.Close();
             }
-            return facturas;
+            return pagos;
         }
     }
 
 
-
-
-    public class ConsultaReponseFactura
+    public class ConsultaReponsePago
     {
-        public List<Factura> Facturas { get; set; }
+        public List<Pago> Pagos { get; set; }
         public string Mensaje { get; set; }
         public bool Error { get; set; }
 
-        public ConsultaReponseFactura(List<Factura> facturas)
+        public ConsultaReponsePago(List<Pago> pagos)
         {
-            Facturas = facturas;
+            Pagos = pagos;
             Error = false;
         }
 
-        public ConsultaReponseFactura(string mensaje)
+        public ConsultaReponsePago(string mensaje)
         {
             Mensaje = mensaje;
             Error = true;
