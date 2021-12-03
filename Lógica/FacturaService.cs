@@ -29,7 +29,7 @@ namespace Lógica
                 {
 
                     facturaRepository.CargarArchivo(facturas);
-                    return "Se cargaron correctamente los datos del archivo";
+                    return "Los datos del archivo se cargaron correctamente";
 
                 }
                 else
@@ -40,7 +40,7 @@ namespace Lógica
             catch (Exception exception)
             {
 
-                return "Se presentó el siguiente error:" + exception.Message;
+                return "Se presentó el siguiente error: " + exception.Message;
             }
             finally
             {
